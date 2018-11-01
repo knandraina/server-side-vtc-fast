@@ -13,6 +13,7 @@ const bookingSchema = new Schema({
     statusBooking : { type: String, enum: ['pending', 'approved', 'declined'], default : 'pending'},
 })
 
+
 const userSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
