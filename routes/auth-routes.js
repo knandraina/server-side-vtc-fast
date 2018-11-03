@@ -6,12 +6,11 @@ const bcrypt = require('bcryptjs');
 
 // require the user model !!!!
 const User = require('../models/user');
-const Booking = require('../models/course')
 
 authRoutes.post('/auth/signup', (req, res, next) => {
-    const { firstName, lastName, username, phone, password } = req.body
+    const { firstName, lastName, username, phone, password, role } = req.body
 
-    if (!firstName || !lastName || !username || !phone || !password) {
+    if (!firstName || !lastName || !username || !phone || !password || !role) {
         res.status(404).json({ message: 'Remplissez les champs vides s\'il vous plait' })
         return
     }
@@ -41,7 +40,8 @@ authRoutes.post('/auth/signup', (req, res, next) => {
                 lastName: lastName,
                 username: username,
                 phone: phone,
-                password: hashPass
+                password: hashPass,
+                role : role
             })
 
             newUser.save(err => {
@@ -65,7 +65,6 @@ authRoutes.post('/auth/signup', (req, res, next) => {
 
 authRoutes.post('/auth/login', (req, res, next) => {
     passport.authenticate('local', (err, theUser, failureDetails) => {
-        console.log(err, theUser,failureDetails)
         if (err) {
             res.status(500).json({ message: 'Something went wrong authenticating user' });
             return;

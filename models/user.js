@@ -23,7 +23,7 @@ const userSchema = new Schema({
     status: { type: String, enum: ['pending', 'approved', 'declined'], default: 'pending', required: true },
     createdOn: {type :Date, default : Date.now},
     objectID : {type : String},
-    role: {type : String, enum:['admin', 'user'], default : 'user', required : true},
+    role: {type : String, enum:['admin', 'user'], required : true},
     course : [bookingSchema],
 })
 

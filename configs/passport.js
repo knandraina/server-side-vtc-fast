@@ -17,7 +17,9 @@ passport.deserializeUser((userIdFromSession, cb) => {
   });
 });
 
-passport.use(new LocalStrategy((username, password, next) => {
+passport.use(new LocalStrategy({ passReqToCallback: true}, (req, username, password, next) => {
+    let role = req.body.role
+    console.log(role)
   User.findOne({ username }, (err, foundUser) => {
     if (err) {
       console.log(err)
@@ -33,6 +35,11 @@ passport.use(new LocalStrategy((username, password, next) => {
     if (!bcrypt.compareSync(password, foundUser.password)) {
       next(null, false, { message: 'Incorrect password.' });
       return;
+    }
+
+    if (role !== foundUser.role){
+      // next(null, false, { message: 'Incorrect role.' });
+      return
     }
 
     next(null, foundUser);
