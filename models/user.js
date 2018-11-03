@@ -27,8 +27,6 @@ const userSchema = new Schema({
     course : [bookingSchema],
 })
 
-
-
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

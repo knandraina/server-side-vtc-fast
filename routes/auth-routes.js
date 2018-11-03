@@ -22,6 +22,7 @@ authRoutes.post('/auth/signup', (req, res, next) => {
     }
 
     User.findOne({ username }, (err, findUser) => {
+        console.log(username)
         if (err) {
             res.status(500).json({ message: " Something went bad." });
             return
@@ -30,38 +31,41 @@ authRoutes.post('/auth/signup', (req, res, next) => {
         if (findUser) {
             res.status(400).json({ message: 'Username taken. Choose another one.' });
             return;
+        } else {
+            const salt = bcrypt.genSaltSync(10);
+            const hashPass = bcrypt.hashSync(password, salt);
+
+
+            const newUser = new User({
+                firstName: firstName,
+                lastName: lastName,
+                username: username,
+                phone: phone,
+                password: hashPass
+            })
+
+            newUser.save(err => {
+                if (err) {
+                    res.status(400).json({ message: 'Saving user to database went wrong.' })
+                    return
+                }
+                req.login(newUser, (err) => {
+                    if (err) {
+                        res.status(500).json({ message: 'Login after signup went bad.' });
+                        return;
+                    }
+                    res.status(200).json(newUser)
+                })
+            })
         }
     })
-    const salt = bcrypt.genSaltSync(10);
-    const hashPass = bcrypt.hashSync(password, salt);
 
-
-    const newUser = new User({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        phone: phone,
-        password: hashPass
-    })
-
-    newUser.save(err => {
-        if (err) {
-            res.status(400).json({ message: 'Saving user to database went wrong.' })
-            return
-        }
-        req.login(newUser, (err) => {
-            if (err) {
-                res.status(500).json({ message: 'Login after signup went bad.' });
-                return;
-            }
-            res.status(200).json(newUser)
-        })
-    })
 })
 
 
 authRoutes.post('/auth/login', (req, res, next) => {
     passport.authenticate('local', (err, theUser, failureDetails) => {
+        console.log(err, theUser,failureDetails)
         if (err) {
             res.status(500).json({ message: 'Something went wrong authenticating user' });
             return;
@@ -117,7 +121,7 @@ authRoutes.post('/auth/reservation', (req, res, next) => {
                 hourdeparture: hourdeparture,
                 moreinformation: moreinformation,
                 addressDeparture: addressDeparture,
-                addressArrival: addressArrival 
+                addressArrival: addressArrival
             })
             data.save()
                 .then(book => {
