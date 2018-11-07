@@ -19,7 +19,6 @@ passport.deserializeUser((userIdFromSession, cb) => {
 
 passport.use(new LocalStrategy({ passReqToCallback: true}, (req, username, password, next) => {
     let role = req.body.role
-    console.log(role)
   User.findOne({ username }, (err, foundUser) => {
     if (err) {
       console.log(err)

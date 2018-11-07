@@ -1,6 +1,5 @@
 const express = require('express');
 const authRoutes = express.Router();
-const mongoose = require('mongoose')
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
 
@@ -41,7 +40,7 @@ authRoutes.post('/auth/signup', (req, res, next) => {
                 username: username,
                 phone: phone,
                 password: hashPass,
-                role : role
+                role: role
             })
 
             newUser.save(err => {
@@ -82,10 +81,16 @@ authRoutes.post('/auth/login', (req, res, next) => {
                 res.status(500).json({ message: 'Session save went bad.' });
                 return;
             }
-
-            // We are now logged in (that's why we can also send req.user)
-            res.status(200).json(theUser);
-
+            
+            if (theUser.role === 'user') {
+                // We are now logged in (that's why we can also send req.user)
+                res.status(200).json(theUser);
+            } else if (theUser.role === 'admin') {
+                User.find()
+                    .then(data => {
+                        return res.status(200).json(data)
+                    })
+            }
 
         });
     })(req, res, next);
@@ -102,6 +107,7 @@ authRoutes.put('/auth/edit', (req, res, next) => {
 
 authRoutes.get('/auth/loggedin', (req, res, next) => {
     if (req.isAuthenticated()) {
+        console.log(req.user)
         res.status(200).json(req.user);
         return;
     }

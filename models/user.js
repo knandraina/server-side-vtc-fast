@@ -3,7 +3,7 @@ const Booking = require('./course')
 const Schema = mongoose.Schema;
 
 const bookingSchema = new Schema({
-
+    createdOn: {type :Date, default : Date.now},
     addressDeparture : {type : String},
     datedeparture : {type : String},
     hourdeparture : {type: String},
@@ -12,7 +12,6 @@ const bookingSchema = new Schema({
     moreinformation : {type : String},
     statusBooking : { type: String, enum: ['pending', 'approved', 'declined'], default : 'pending'},
 })
-
 
 const userSchema = new Schema({
     firstName: { type: String, required: true },
